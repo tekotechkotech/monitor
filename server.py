@@ -478,9 +478,13 @@ class MonitorRequestHandler(SimpleHTTPRequestHandler):
 
     def log_message(self, format, *args):
         # Keep stdout clean; suppress spammy GET polling logs
-        if "GET /api/" in (args[0] if args else "") or "GET /health" in (args[0] if args else ""):
-            return
-        super().log_message(format, *args)
+        try:
+            msg = format % args
+            if "GET /api/" in msg or "GET /health" in msg:
+                return
+            super().log_message(format, *args)
+        except Exception:
+            pass
 
 def main():
     # Start background collector thread
