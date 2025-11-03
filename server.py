@@ -6,6 +6,7 @@ Zero external dependencies. Python 3 stdlib only.
 
 import os
 import sys
+import glob
 import time
 import json
 import socket
@@ -381,6 +382,165 @@ def get_service_statuses():
         })
     return results
 
+def get_power_info():
+    """Reads power supply, AC status, and battery metrics."""
+    ac_online = False
+    battery = None
+
+    try:
+        for path in sorted(glob.glob("/sys/class/power_supply/*")):
+            name = os.path.basename(path)
+            data = {"name": name}
+            for attr in ["type", "status", "capacity", "online", "model_name", "manufacturer", "power_now", "voltage_now"]:
+                f = os.path.join(path, attr)
+                if os.path.exists(f):
+                    try:
+                        with open(f) as fp:
+                            data[attr] = fp.read().strip()
+                    except Exception:
+                        pass
+
+            sup_type = data.get("type", "")
+            if sup_type in ("Mains", "USB") or "AC" in name:
+                if data.get("online") == "1":
+                    ac_online = True
+
+            if sup_type == "Battery" or "BAT" in name:
+                try:
+                    cap = int(data.get("capacity", "0"))
+                except ValueError:
+                    cap = 0
+                status = data.get("status", "Unknown")
+                p_watts = 0.0
+                if "power_now" in data:
+                    try:
+                        p_watts = round(int(data["power_now"]) / 1000000.0, 1)
+                    except ValueError:
+                        pass
+                v_volts = 0.0
+                if "voltage_now" in data:
+                    try:
+                        v_volts = round(int(data["voltage_now"]) / 1000000.0, 2)
+                    except ValueError:
+                        pass
+
+                battery = {
+                    "name": name,
+                    "present": data.get("present", "1") == "1",
+                    "percent": cap,
+                    "status": status,
+                    "model": data.get("model_name") or data.get("manufacturer") or "Generic Battery",
+                    "power_watts": p_watts,
+                    "voltage": v_volts,
+                    "is_charging": status.lower() == "charging",
+                    "plugged": ac_online or status.lower() in ("charging", "not charging", "full")
+                }
+    except Exception:
+        pass
+
+    if battery and not ac_online and battery["status"].lower() in ("charging", "not charging", "full"):
+        ac_online = True
+
+    return {
+        "has_battery": battery is not None,
+        "ac_online": ac_online,
+        "battery": battery
+    }
+
+def get_temperatures():
+    """Reads temperature sensors from /sys/class/hwmon and /sys/class/thermal."""
+    sensors = []
+    seen = set()
+
+    try:
+        for h in sorted(glob.glob("/sys/class/hwmon/hwmon*")):
+            name_f = os.path.join(h, "name")
+            chip_name = "hwmon"
+            if os.path.exists(name_f):
+                try:
+                    with open(name_f) as fp:
+                        chip_name = fp.read().strip()
+                except Exception:
+                    pass
+
+            for inp in sorted(glob.glob(os.path.join(h, "temp*_input"))):
+                lbl_file = inp.replace("_input", "_label")
+                sub_label = ""
+                if os.path.exists(lbl_file):
+                    try:
+                        with open(lbl_file) as fp:
+                            sub_label = fp.read().strip()
+                    except Exception:
+                        pass
+
+                try:
+                    with open(inp) as fp:
+                        val = int(fp.read().strip()) / 1000.0
+                    if val <= 0 or val > 150:
+                        continue
+
+                    display_name = chip_name
+                    if chip_name in ("k10temp", "coretemp"):
+                        display_name = "CPU"
+                        if sub_label:
+                            display_name += f" ({sub_label})"
+                    elif chip_name == "amdgpu":
+                        display_name = "GPU (AMD)"
+                        if sub_label:
+                            display_name += f" ({sub_label})"
+                    elif chip_name == "nvme":
+                        display_name = "NVMe SSD"
+                        if sub_label:
+                            display_name += f" ({sub_label})"
+                    elif chip_name == "acpitz":
+                        display_name = "Motherboard (ACPI)"
+                    else:
+                        if sub_label:
+                            display_name += f" - {sub_label}"
+
+                    if display_name not in seen:
+                        seen.add(display_name)
+                        sensors.append({
+                            "chip": chip_name,
+                            "label": display_name,
+                            "temp": round(val, 1)
+                        })
+                except Exception:
+                    pass
+    except Exception:
+        pass
+
+    if not sensors:
+        try:
+            for t in sorted(glob.glob("/sys/class/thermal/thermal_zone*")):
+                try:
+                    with open(os.path.join(t, "type")) as fp:
+                        t_type = fp.read().strip()
+                    with open(os.path.join(t, "temp")) as fp:
+                        val = int(fp.read().strip()) / 1000.0
+                    if 0 < val <= 150:
+                        sensors.append({
+                            "chip": "thermal_zone",
+                            "label": t_type,
+                            "temp": round(val, 1)
+                        })
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
+    def sort_order(s):
+        lbl = s["label"].lower()
+        if "cpu" in lbl:
+            return 0
+        if "gpu" in lbl:
+            return 1
+        if "nvme" in lbl or "ssd" in lbl:
+            return 2
+        return 3
+
+    return sorted(sensors, key=sort_order)
+
 def get_top_processes(sort_by="cpu", limit=12):
     """Retrieves top processes using ps."""
     sort_flag = "-%cpu" if sort_by == "cpu" else "-%mem"
@@ -444,6 +604,8 @@ class MonitorRequestHandler(SimpleHTTPRequestHandler):
                 "disks": get_disk_info(),
                 "network": net_rates,
                 "services": get_service_statuses(),
+                "power": get_power_info(),
+                "temperatures": get_temperatures(),
                 "timestamp": time.time(),
                 "last_update": last_update
             }
