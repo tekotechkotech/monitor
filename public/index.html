@@ -96,6 +96,16 @@
       border-color: rgba(16, 185, 129, 0.3);
     }
 
+    .badge.yellow {
+      color: var(--warning);
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .badge.red {
+      color: var(--danger);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
     .pulse {
       width: 7px;
       height: 7px;
@@ -245,6 +255,9 @@
       border-radius: 6px;
       padding: 10px;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .hero-stat-val {
@@ -259,6 +272,12 @@
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
+    }
+
+    .hero-stat-sub {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 2px;
     }
 
     /* Thermal Grid */
@@ -327,10 +346,316 @@
       box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
     }
 
+    .status-dot.warning {
+      background: var(--warning);
+      box-shadow: 0 0 6px rgba(245, 158, 11, 0.5);
+    }
+
+    /* Overheat Alert Banner */
+    .alert-banner {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid var(--danger);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .alert-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .alert-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--danger);
+      letter-spacing: 0.3px;
+    }
+
+    .btn-copy {
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .btn-copy:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .btn-copy:active {
+      transform: scale(0.96);
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-dialog {
+      background: var(--card-bg, #1e1e24);
+      border: 1px solid var(--border, #333);
+      border-radius: 8px;
+      width: 90%;
+      max-width: 520px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border, #333);
+      padding-bottom: 10px;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted, #888);
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--text, #fff);
+    }
+
+    .modal-step {
+      margin-bottom: 14px;
+      font-size: 13px;
+    }
+
+    .modal-step label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .btn-reconnect {
+      background: rgba(234, 179, 8, 0.15);
+      border: 1px solid rgba(234, 179, 8, 0.4);
+      color: #eab308;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn-reconnect:hover {
+      background: rgba(234, 179, 8, 0.3);
+      border-color: #eab308;
+    }
+
+    .btn-log-view {
+      background: rgba(14, 165, 233, 0.12);
+      border: 1px solid rgba(14, 165, 233, 0.35);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn-log-view:hover {
+      background: rgba(14, 165, 233, 0.25);
+      border-color: var(--accent);
+    }
+
+    .modal-dialog.modal-large {
+      max-width: 760px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 18px;
+    }
+
+    .log-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .log-select {
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      outline: none;
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .log-select:focus {
+      border-color: var(--accent);
+    }
+
+    .log-lines-select {
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      outline: none;
+      width: 90px;
+    }
+
+    .log-terminal {
+      background: #050811;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.5;
+      color: #cbd5e1;
+      height: 380px;
+      max-height: 52vh;
+      overflow-y: auto;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      user-select: text;
+    }
+
+    .log-status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+
+
+    .btn-action-primary {
+      background: #3b82f6;
+      border: 1px solid #2563eb;
+      color: white;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      width: 100%;
+      box-sizing: border-box;
+      transition: background 0.15s;
+    }
+
+    .btn-action-primary:hover {
+      background: #2563eb;
+    }
+
+    .input-auth-code {
+      width: 100%;
+      box-sizing: border-box;
+      background: var(--card-sub, #141417);
+      border: 1px solid var(--border, #333);
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: var(--text, #fff);
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .input-auth-code:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .modal-status-msg {
+      margin-top: 10px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      padding: 8px 10px;
+      border-radius: 4px;
+      display: none;
+    }
+
+    .alert-cmd-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 7px 10px;
+      font-size: 11px;
+      color: var(--text);
+      overflow-x: auto;
+      white-space: nowrap;
+      user-select: all;
+    }
+
     /* CPU Cores Grid */
     .cores-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
       gap: 6px;
       margin-top: 8px;
     }
@@ -596,6 +921,15 @@
       </div>
     </header>
 
+    <!-- Alert Overheat (>= 80°C) -->
+    <div id="overheat-alert" class="alert-banner" style="display: none;">
+      <div class="alert-header">
+        <span class="alert-title" id="overheat-title">⚠️ Overheat! Turunkan clock CPU (--°C)</span>
+        <button type="button" class="btn-copy" id="btn-copy-cmd" onclick="copyOverheatCmd()">Salin CMD</button>
+      </div>
+      <div class="alert-cmd-box mono" id="overheat-cmd"></div>
+    </div>
+
     <!-- TAB 1: RINGKASAN (OVERVIEW) -->
     <div id="tab-overview" class="tab-content active">
       <!-- Quick Metric Counters -->
@@ -603,6 +937,7 @@
         <div class="hero-stat-card">
           <div class="hero-stat-lbl">CPU Total</div>
           <div class="hero-stat-val" id="ov-cpu" style="color: var(--accent);">0%</div>
+          <div class="hero-stat-sub mono" id="ov-cpu-ghz">-- GHz</div>
         </div>
         <div class="hero-stat-card">
           <div class="hero-stat-lbl">RAM Terpakai</div>
@@ -663,6 +998,56 @@
           <span class="badge" id="val-service-count">-- online</span>
         </div>
         <div class="services-grid" id="services-container">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- OKX 24/7 Quantitative Trading Agent (Head-to-Head Monitor - READ ONLY) -->
+      <div class="card" id="card-okx-agent">
+        <div class="card-title">
+          <span style="display: flex; align-items: center; gap: 8px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            OKX 24/7 Quantitative Trading Agent
+          </span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="badge mono" id="okx-target-badge">BTC-USDT-SWAP</span>
+            <span class="badge" id="val-okx-status">--</span>
+          </div>
+        </div>
+        <div id="okx-agent-container">
+          <!-- Rendered dynamically (Strictly Read-Only) -->
+        </div>
+      </div>
+
+      <!-- Google Drive Status (faizzzzz & faizclcp) -->
+      <div class="card">
+        <div class="card-title">
+          <span>Google Drive Cloud Storage</span>
+          <span class="badge" id="val-gdrive-count">-- online</span>
+        </div>
+        <div class="item-list" id="gdrive-container">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Otomasi & Jadwal Task -->
+      <div class="card" id="card-cron-tasks">
+        <div class="card-title">
+          <span>Otomasi & Jadwal Task</span>
+          <span class="badge" id="val-cron-status">--</span>
+        </div>
+        <div class="item-list" id="cron-tasks-container">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Backup SIFTNU Status (24 Jam & Prediksi Server) -->
+      <div class="card" id="card-backup">
+        <div class="card-title">
+          <span>Status Backup SIFTNU & Kesiapan Server</span>
+          <span class="badge" id="val-backup-status">--</span>
+        </div>
+        <div class="item-list" id="backup-container">
           <!-- Rendered dynamically -->
         </div>
       </div>
@@ -902,6 +1287,43 @@
     let pollTimer = null;
     let currentProcSort = 'cpu';
     let activeTab = 'overview';
+    let currentOverheatCmd = '';
+
+    function copyOverheatCmd() {
+      if (!currentOverheatCmd) return;
+      const btn = document.getElementById('btn-copy-cmd');
+      const feedback = () => {
+        if (btn) {
+          const oldTxt = btn.innerText;
+          btn.innerText = 'Tersalin!';
+          setTimeout(() => { btn.innerText = oldTxt; }, 1500);
+        }
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(currentOverheatCmd).then(feedback).catch(() => {
+          fallbackCopy(currentOverheatCmd, feedback);
+        });
+      } else {
+        fallbackCopy(currentOverheatCmd, feedback);
+      }
+    }
+
+    function fallbackCopy(text, cb) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        if (cb) cb();
+      } catch (e) {
+        console.error('Fallback copy failed:', e);
+      }
+      document.body.removeChild(ta);
+    }
 
     function fmtBytes(bytes, decimals = 1) {
       if (!bytes || bytes === 0) return '0 B';
@@ -917,6 +1339,17 @@
       if (bytesPerSec < 1024) return bytesPerSec.toFixed(0) + ' B/s';
       if (bytesPerSec < 1024 * 1024) return (bytesPerSec / 1024).toFixed(1) + ' KB/s';
       return (bytesPerSec / (1024 * 1024)).toFixed(2) + ' MB/s';
+    }
+
+    function fmtSeconds(sec) {
+      if (sec === null || sec === undefined) return '--';
+      if (sec <= 0) return 'Kedaluwarsa';
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      if (m < 60) return `${m}m ${s}s`;
+      const h = Math.floor(m / 60);
+      const remM = m % 60;
+      return `${h}j ${remM}m`;
     }
 
     function getColorClass(pct) {
@@ -962,7 +1395,7 @@
 
         if (statsRes.ok) {
           const stats = await statsRes.json();
-          renderStats(stats);
+          renderData(stats);
         }
 
         if (procRes.ok) {
@@ -974,7 +1407,7 @@
       }
     }
 
-    function renderStats(data) {
+    function renderData(data) {
       // Header & System info
       document.getElementById('badge-host').innerText = data.system.hostname;
       document.getElementById('header-uptime').innerText = `Up: ${data.uptime_load.uptime_formatted}`;
@@ -1009,6 +1442,365 @@
       });
       document.getElementById('val-service-count').innerText = `${onlineCount}/${data.services.length} active`;
 
+      // OKX Quantitative Trading Agent (Head-to-Head Monitor - READ ONLY)
+      const okxContainer = document.getElementById('okx-agent-container');
+      const okxStatusBadge = document.getElementById('val-okx-status');
+      const okxTargetBadge = document.getElementById('okx-target-badge');
+
+      if (okxContainer && data.okx_trading) {
+        const okx = data.okx_trading;
+        const isOnline = okx.service_status === 'online';
+
+        if (okxStatusBadge) {
+          okxStatusBadge.className = `badge ${isOnline ? 'green' : 'red'}`;
+          okxStatusBadge.innerHTML = `<span class="status-dot ${isOnline ? 'online' : ''}"></span> ${isOnline ? 'RUNNING 24/7' : 'OFFLINE'}`;
+        }
+        if (okxTargetBadge && okx.last_price) {
+          okxTargetBadge.innerText = `${okx.target} · $${okx.last_price}`;
+        }
+
+        const d = okx.demo || {};
+        const dm = okx.demoo || {};
+
+        okxContainer.innerHTML = `
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; margin-bottom: 8px;">
+            <!-- Runner demo (Skill 1) -->
+            <div style="background: var(--card-sub); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: 600; font-size: 12px; color: var(--accent);">Runner 'demo' (Skill 1: Quant Momentum)</span>
+                <span class="badge ${d.status === 'NORMAL' ? 'green' : 'yellow'}" style="font-size: 10px;">${d.status || 'NORMAL'}</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px; margin-bottom: 6px;">
+                <div>Equity: <strong class="mono" style="color: var(--text);">$${(d.equity || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</strong></div>
+                <div>Win Rate: <strong class="mono" style="color: var(--success);">${d.win_rate || 0}%</strong></div>
+                <div>Drawdown: <strong class="mono" style="color: ${(d.drawdown_pct || 0) > 2 ? 'var(--warning)' : 'var(--text-muted)'};">${d.drawdown_pct || 0}%</strong></div>
+                <div>Realized PnL: <strong class="mono" style="color: ${(d.realized_pnl || 0) >= 0 ? 'var(--success)' : 'var(--danger)'};">$${(d.realized_pnl || 0).toFixed(2)}</strong></div>
+              </div>
+              <div style="font-size: 10px; color: var(--text-dim); border-top: 1px solid var(--border); padding-top: 4px; display: flex; justify-content: space-between;">
+                <span>Edge: <span class="mono">${d.edge || 'EV >= +0.35R'}</span></span>
+                <span>Trades: <span class="mono">${d.trades_count || 0}</span></span>
+              </div>
+            </div>
+
+            <!-- Runner demoo (Skill 2) -->
+            <div style="background: var(--card-sub); border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: 600; font-size: 12px; color: var(--success);">Runner 'demoo' (Skill 2: Trading Risk Guard)</span>
+                <span class="badge ${dm.status === 'NORMAL' ? 'green' : 'yellow'}" style="font-size: 10px;">${dm.status || 'NORMAL'}</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px; margin-bottom: 6px;">
+                <div>Equity: <strong class="mono" style="color: var(--text);">$${(dm.equity || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</strong></div>
+                <div>Win Rate: <strong class="mono" style="color: var(--success);">${dm.win_rate || 0}%</strong></div>
+                <div>Drawdown: <strong class="mono" style="color: ${(dm.drawdown_pct || 0) > 2 ? 'var(--warning)' : 'var(--text-muted)'};">${dm.drawdown_pct || 0}%</strong></div>
+                <div>Realized PnL: <strong class="mono" style="color: ${(dm.realized_pnl || 0) >= 0 ? 'var(--success)' : 'var(--danger)'};">$${(dm.realized_pnl || 0).toFixed(2)}</strong></div>
+              </div>
+              <div style="font-size: 10px; color: var(--text-dim); border-top: 1px solid var(--border); padding-top: 4px; display: flex; justify-content: space-between;">
+                <span>Defense: <span class="mono">${dm.edge || 'Fixed 1R=$100'}</span></span>
+                <span>Trades: <span class="mono">${dm.trades_count || 0}</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Read-Only Last Evaluation / Telemetry -->
+          <div style="font-size: 11px; color: var(--text-muted); background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 4px; padding: 6px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <span style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              <span class="pulse" style="width: 5px; height: 5px;"></span>
+              <span>Audit Sinyal: <strong class="mono" style="color: var(--text); font-weight: 500;">${okx.last_eval || 'Monitoring active 15m candle stream...'}</strong></span>
+            </span>
+            <span class="mono" style="font-size: 10px; color: var(--text-dim); white-space: nowrap;">PID ${okx.pid || '-'} · ${okx.memory_mb || 0} MB (Read-Only)</span>
+          </div>
+        `;
+      }
+
+      // Google Drive Status
+      const gdriveContainer = document.getElementById('gdrive-container');
+      if (gdriveContainer && data.gdrive) {
+        gdriveContainer.innerHTML = '';
+        let gdriveOnline = 0;
+        data.gdrive.forEach(d => {
+          if (d.mounted) gdriveOnline++;
+          const card = document.createElement('div');
+          card.className = 'item-card';
+          card.innerHTML = `
+            <div class="item-card-head">
+              <span style="font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                <span class="status-dot ${d.mounted ? 'online' : ''}"></span>
+                ${d.name}
+              </span>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <button class="btn-reconnect" onclick="openReconnectModal('${d.name}')" title="Hubungkan kembali Google Drive via OAuth">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                  Reconnect
+                </button>
+                <span class="badge ${d.mounted ? 'green' : ''}" style="font-size: 10px;">
+                  ${d.mounted ? 'TERHUBUNG' : 'TERPUTUS'}
+                </span>
+              </div>
+            </div>
+            <div class="item-card-sub" style="margin-bottom: ${d.mounted && d.total > 0 ? '6px' : '0'};">
+              <span>Token Expiry: <strong style="color: ${d.expires_in_seconds > 60 ? 'var(--text)' : 'var(--danger)'};">${fmtSeconds(d.expires_in_seconds)}</strong></span>
+              <span style="color: ${d.token_valid ? 'var(--success)' : 'var(--danger)'};">${d.token_valid ? 'Token Valid' : 'Token Invalid'}</span>
+            </div>
+            ${d.mounted && d.total > 0 ? `
+              <div class="bar-bg" style="height: 6px; margin-bottom: 4px;">
+                <div class="bar-fill ${getColorClass(d.used_percent)}" style="width: ${d.used_percent}%;"></div>
+              </div>
+              <div class="item-card-sub">
+                <span>Penyimpanan: ${fmtBytes(d.used)} / ${fmtBytes(d.total)}</span>
+                <span>${d.used_percent}%</span>
+              </div>
+            ` : ''}
+          `;
+          gdriveContainer.appendChild(card);
+        });
+        const gdriveCountEl = document.getElementById('val-gdrive-count');
+        if (gdriveCountEl) gdriveCountEl.innerText = `${gdriveOnline}/${data.gdrive.length} active`;
+      }
+
+      // Otomasi & Jadwal Task (Cronjobs)
+      const cronContainer = document.getElementById('cron-tasks-container');
+      const cronStatusBadge = document.getElementById('val-cron-status');
+      if (cronContainer && data.cron_tasks) {
+        cronContainer.innerHTML = '';
+        const wifi = data.cron_tasks.wifi || {};
+        const siftnu = data.cron_tasks.siftnu || {};
+
+        if (cronStatusBadge) {
+          const hasError = wifi.state === 'ERROR' || siftnu.state === 'ERROR';
+          cronStatusBadge.className = `badge ${hasError ? 'red' : 'green'}`;
+          cronStatusBadge.innerText = hasError ? 'Ada Kendala' : 'Aktif';
+        }
+
+        // 1. WiFi Task Card
+        const wifiCard = document.createElement('div');
+        wifiCard.className = 'item-card';
+
+        let wifiBadgeClass = '';
+        let wifiBadgeText = wifi.state || 'UNKNOWN';
+        let wifiDotClass = '';
+        if (wifi.state === 'OPEN') {
+          wifiBadgeClass = 'green';
+          wifiBadgeText = 'OPEN (Aktif)';
+          wifiDotClass = 'online';
+        } else if (wifi.state === 'CLOSED') {
+          wifiBadgeClass = '';
+          wifiBadgeText = 'CLOSED (Terkunci)';
+          wifiDotClass = 'warning';
+        } else if (wifi.state === 'ERROR') {
+          wifiBadgeClass = 'red';
+          wifiBadgeText = 'ERROR';
+          wifiDotClass = 'offline';
+        } else if (wifi.state === 'INIT') {
+          wifiBadgeClass = '';
+          wifiBadgeText = 'STANDBY / INIT';
+          wifiDotClass = 'warning';
+        }
+
+        wifiCard.innerHTML = `
+          <div class="item-card-head">
+            <span style="font-weight: 600; display: flex; align-items: center; gap: 6px;">
+              <span class="status-dot ${wifiDotClass}"></span>
+              ${wifi.name || 'WiFi 2.4G Router'}
+            </span>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button class="btn-log-view" onclick="openLogModal('cron', 'wifi', 'WiFi 2.4G Router')" title="Lihat log cron WiFi">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                Lihat Log
+              </button>
+              <span class="badge ${wifiBadgeClass}" style="font-size: 10px;">
+                ${wifiBadgeText}
+              </span>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 6px; margin-top: 8px; font-family: var(--font-mono); font-size: 11px;">
+            <div style="background: var(--card-bg); padding: 6px 8px; border-radius: 4px; border: 1px solid var(--border);">
+              <span style="color: var(--text-dim); display: block; font-size: 10px;">EKSEKUSI TERAKHIR</span>
+              <strong style="color: var(--text);">${wifi.last_run || '-'}</strong>
+            </div>
+            <div style="background: var(--card-bg); padding: 6px 8px; border-radius: 4px; border: 1px solid var(--border);">
+              <span style="color: var(--text-dim); display: block; font-size: 10px;">JADWAL BERIKUTNYA</span>
+              <strong style="color: var(--accent);">${wifi.next_schedule || '-'}</strong>
+            </div>
+            <div style="background: var(--card-bg); padding: 6px 8px; border-radius: 4px; border: 1px solid var(--border); grid-column: 1 / -1;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
+                <div>
+                  <span style="color: var(--text-dim); display: block; font-size: 10px;">STATUS TERAKHIR</span>
+                  <span style="color: var(--text-muted); font-size: 10px;">${wifi.last_status || '-'}</span>
+                </div>
+                <div style="text-align: right;">
+                  <span style="color: var(--text-dim); display: block; font-size: 10px;">POLA JADWAL</span>
+                  <span style="color: var(--text-dim); font-size: 10px;">${wifi.schedule || '-'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        cronContainer.appendChild(wifiCard);
+
+        // 2. Siftnu Backup Task Card
+        const siftnuCard = document.createElement('div');
+        siftnuCard.className = 'item-card';
+
+        let siftnuBadgeClass = '';
+        let siftnuBadgeText = siftnu.state || 'UNKNOWN';
+        let siftnuDotClass = '';
+        if (siftnu.state === 'SUCCESS') {
+          siftnuBadgeClass = 'green';
+          siftnuBadgeText = 'BERHASIL';
+          siftnuDotClass = 'online';
+        } else if (siftnu.state === 'ERROR') {
+          siftnuBadgeClass = 'red';
+          siftnuBadgeText = 'GAGAL';
+          siftnuDotClass = 'offline';
+        } else if (siftnu.state === 'INIT') {
+          siftnuBadgeClass = '';
+          siftnuBadgeText = 'STANDBY / INIT';
+          siftnuDotClass = 'warning';
+        }
+
+        siftnuCard.innerHTML = `
+          <div class="item-card-head">
+            <span style="font-weight: 600; display: flex; align-items: center; gap: 6px;">
+              <span class="status-dot ${siftnuDotClass}"></span>
+              ${siftnu.name || 'Backup Siftnu'}
+            </span>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button class="btn-log-view" onclick="openLogModal('cron', 'siftnu', 'Backup Siftnu')" title="Lihat log cron Backup Siftnu">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                Lihat Log
+              </button>
+              <span class="badge ${siftnuBadgeClass}" style="font-size: 10px;">
+                ${siftnuBadgeText}
+              </span>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 6px; margin-top: 8px; font-family: var(--font-mono); font-size: 11px;">
+            <div style="background: var(--card-bg); padding: 6px 8px; border-radius: 4px; border: 1px solid var(--border);">
+              <span style="color: var(--text-dim); display: block; font-size: 10px;">EKSEKUSI TERAKHIR</span>
+              <strong style="color: var(--text);">${siftnu.last_run || '-'}</strong>
+            </div>
+            <div style="background: var(--card-bg); padding: 6px 8px; border-radius: 4px; border: 1px solid var(--border);">
+              <span style="color: var(--text-dim); display: block; font-size: 10px;">JADWAL BERIKUTNYA</span>
+              <strong style="color: var(--accent);">${siftnu.next_schedule || '-'}</strong>
+            </div>
+            <div style="background: var(--card-bg); padding: 6px 8px; border-radius: 4px; border: 1px solid var(--border); grid-column: 1 / -1;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
+                <div>
+                  <span style="color: var(--text-dim); display: block; font-size: 10px;">STATUS TERAKHIR</span>
+                  <span style="color: var(--text-muted); font-size: 10px;">${siftnu.last_status || '-'}</span>
+                </div>
+                <div style="text-align: right;">
+                  <span style="color: var(--text-dim); display: block; font-size: 10px;">POLA JADWAL</span>
+                  <span style="color: var(--text-dim); font-size: 10px;">${siftnu.schedule || '-'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        cronContainer.appendChild(siftnuCard);
+      }
+
+      // Backup SIFTNU Status & Forecast
+      const backupContainer = document.getElementById('backup-container');
+      const backupStatusBadge = document.getElementById('val-backup-status');
+      if (backupContainer && data.backup) {
+        backupContainer.innerHTML = '';
+        const b = data.backup;
+        const s24 = b.status_24h || {};
+        const fc = b.forecast || {};
+
+        if (backupStatusBadge) {
+          const isOk = s24.success && fc.status === 'AMAN';
+          backupStatusBadge.className = `badge ${isOk ? 'green' : (s24.success ? 'yellow' : 'red')}`;
+          backupStatusBadge.innerText = isOk ? 'SIAP & AMAN' : (s24.success ? fc.status : 'GAGAL');
+        }
+
+        // Card 1: Keadaan Backup 24 Jam Terakhir
+        const card24 = document.createElement('div');
+        card24.className = 'item-card';
+        const s24Class = s24.success ? 'online' : (s24.has_run ? 'offline' : '');
+        const s24BadgeClass = s24.success ? 'green' : (s24.has_run ? 'red' : 'yellow');
+
+        card24.innerHTML = `
+          <div class="item-card-head">
+            <span style="font-weight: 600; display: flex; align-items: center; gap: 6px;">
+              <span class="status-dot ${s24Class}"></span>
+              Keadaan Backup 24 Jam Terakhir
+            </span>
+            <span class="badge ${s24BadgeClass}" style="font-size: 10px;">
+              ${s24.status || 'UNKNOWN'}
+            </span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 6px; margin-top: 8px; font-family: var(--font-mono); font-size: 11px;">
+            <div style="background: var(--card-bg); padding: 6px 8px; border-radius: 4px; border: 1px solid var(--border);">
+              <span style="color: var(--text-dim); display: block; font-size: 10px;">EKSEKUSI TERAKHIR</span>
+              <strong style="color: var(--text);">${s24.finish_time || s24.last_run || '-'}</strong>
+              ${s24.duration ? `<span style="color: var(--accent); font-size: 10px; margin-left: 4px;">(${s24.duration})</span>` : ''}
+            </div>
+            <div style="background: var(--card-bg); padding: 6px 8px; border-radius: 4px; border: 1px solid var(--border);">
+              <span style="color: var(--text-dim); display: block; font-size: 10px;">HASIL FILE DATABASE</span>
+              <strong style="color: var(--text);">${s24.parts_count} file .sql.gz</strong>
+              <span style="color: var(--text-muted); font-size: 10px; margin-left: 4px;">(${s24.total_size_mb} MB)</span>
+            </div>
+            <div style="background: var(--card-bg); padding: 6px 8px; border-radius: 4px; border: 1px solid var(--border); grid-column: 1 / -1;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
+                <div>
+                  <span style="color: var(--text-dim); display: block; font-size: 10px;">LOKASI PENYIMPANAN</span>
+                  <strong style="color: var(--text);">${s24.target_storage}</strong>
+                </div>
+                <div style="text-align: right;">
+                  <span style="color: var(--text-dim); display: block; font-size: 10px;">LOG STATUS</span>
+                  <span style="color: var(--text-muted); font-size: 10px;">${s24.last_log || '-'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        backupContainer.appendChild(card24);
+
+        // Card 2: Prediksi Kesiapan Server 24 Jam Ke Depan
+        const cardFc = document.createElement('div');
+        cardFc.className = 'item-card';
+        const fcBadgeClass = fc.status === 'AMAN' ? 'green' : (fc.status === 'WASPADA' ? 'yellow' : 'red');
+
+        let checksHtml = '';
+        if (fc.checks && fc.checks.length > 0) {
+          checksHtml = fc.checks.map(c => {
+            const dotClass = c.status === 'OK' ? 'online' : (c.status === 'WARNING' ? 'warning' : 'offline');
+            const color = c.status === 'OK' ? 'var(--text)' : (c.status === 'WARNING' ? 'var(--warning)' : 'var(--danger)');
+            return `
+              <div style="display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 5px 8px; border-radius: 4px; border: 1px solid var(--border); font-family: var(--font-mono); font-size: 11px;">
+                <span style="display: flex; align-items: center; gap: 6px;">
+                  <span class="status-dot ${dotClass}" style="width: 6px; height: 6px;"></span>
+                  ${c.name}
+                </span>
+                <span style="color: ${color}; font-weight: 600;">${c.detail}</span>
+              </div>
+            `;
+          }).join('');
+        }
+
+        cardFc.innerHTML = `
+          <div class="item-card-head">
+            <span style="font-weight: 600; display: flex; align-items: center; gap: 6px;">
+              <span class="status-dot ${fc.status === 'AMAN' ? 'online' : 'warning'}"></span>
+              Kesiapan Server (Backup 24 Jam Ke Depan)
+            </span>
+            <span class="badge ${fcBadgeClass}" style="font-size: 10px;">
+              ${fc.status || 'UNKNOWN'}
+            </span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 8px;">
+            ${checksHtml}
+          </div>
+          <div style="margin-top: 8px; font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <span>${fc.summary || ''}</span>
+          </div>
+        `;
+        backupContainer.appendChild(cardFc);
+      }
+
       // Memory
       const ram = data.memory;
       const ramUsedGb = (ram.used / (1024**3)).toFixed(2);
@@ -1036,25 +1828,29 @@
 
       // CPU Total & Cores
       const cpuUsage = data.cpu.usage_percent;
+      const curGhz = (data.cpu && data.cpu.cur_ghz !== undefined) ? data.cpu.cur_ghz : 0;
       document.getElementById('ov-cpu').innerText = `${cpuUsage}%`;
+      const ovCpuGhz = document.getElementById('ov-cpu-ghz');
+      if (ovCpuGhz) ovCpuGhz.innerText = `${curGhz} GHz`;
       document.getElementById('ov-cpu-txt').innerText = `${cpuUsage}%`;
       const ovCpuBar = document.getElementById('ov-cpu-bar');
       ovCpuBar.style.width = `${cpuUsage}%`;
       ovCpuBar.className = `bar-fill ${getColorClass(cpuUsage)}`;
 
-      document.getElementById('hw-cpu-total').innerText = `${cpuUsage}%`;
+      document.getElementById('hw-cpu-total').innerText = `${cpuUsage}% • ${curGhz} GHz`;
       const hwCpuBar = document.getElementById('hw-cpu-bar');
       hwCpuBar.style.width = `${cpuUsage}%`;
       hwCpuBar.className = `bar-fill ${getColorClass(cpuUsage)}`;
 
       const coresContainer = document.getElementById('cores-container');
       coresContainer.innerHTML = '';
-      data.cpu.cores.forEach(c => {
+      (data.cpu.cores || []).forEach(c => {
         const cBox = document.createElement('div');
         cBox.className = 'core-box';
+        const ghzStr = (c.ghz !== undefined && c.ghz !== null) ? ` (${c.ghz} GHz)` : '';
         cBox.innerHTML = `
           <div class="core-head">
-            <span>${c.core}</span>
+            <span>${c.core}${ghzStr}</span>
             <span>${c.usage}%</span>
           </div>
           <div class="bar-bg" style="height: 4px;">
@@ -1126,6 +1922,31 @@
       const temps = data.temperatures || [];
       const primaryTemp = temps.find(t => t.label.toLowerCase().includes('cpu')) || temps[0];
       const tempValStr = primaryTemp ? `${primaryTemp.temp}°C` : '--°C';
+
+      // Overheat Alert Logic (>= 80°C)
+      let cpuTemp = 0;
+      const cpuSensors = temps.filter(t => t.label && t.label.toLowerCase().includes('cpu'));
+      if (cpuSensors.length > 0) {
+        cpuTemp = Math.max(...cpuSensors.map(t => t.temp || 0));
+      } else if (temps.length > 0) {
+        cpuTemp = Math.max(...temps.map(t => t.temp || 0));
+      }
+
+      const alertBanner = document.getElementById('overheat-alert');
+      const overheatTitle = document.getElementById('overheat-title');
+      const overheatCmd = document.getElementById('overheat-cmd');
+
+      if (cpuTemp >= 80.0) {
+        const curKhz = (data.cpu && data.cpu.cur_freq_khz) || 4000000;
+        const targetKhz = Math.max(400000, Math.round(curKhz / 2));
+        currentOverheatCmd = `echo ${targetKhz} | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq`;
+
+        if (overheatTitle) overheatTitle.innerText = `⚠️ Overheat! Turunkan clock CPU (${cpuTemp}°C)`;
+        if (overheatCmd) overheatCmd.innerText = currentOverheatCmd;
+        if (alertBanner) alertBanner.style.display = 'flex';
+      } else {
+        if (alertBanner) alertBanner.style.display = 'none';
+      }
 
       const ovTempEl = document.getElementById('ov-temp');
       if (ovTempEl) {
@@ -1268,9 +2089,292 @@
       }
     }
 
+    // Alias for compatibility
+    const renderStats = renderData;
+
     // Initial fetch and start loop
     fetchData();
     pollTimer = setInterval(fetchData, pollInterval);
-  </script>
-</body>
+  // Modal handling functions
+function openReconnectModal(remote) {
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.add('active');
+  overlay.dataset.remote = remote;
+  // Clear previous messages
+  const statusMsg = document.getElementById('modal-status');
+  if (statusMsg) statusMsg.style.display = 'none';
+  // Fetch auth URL
+  fetch('/api/gdrive/auth-url', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ remote })
+  })
+    .then(res => res.json())
+    .then(data => {
+      const linkEl = document.getElementById('auth-link');
+      if (data.auth_url) {
+        linkEl.href = data.auth_url;
+        linkEl.textContent = 'Buka Google OAuth Link';
+      } else {
+        linkEl.textContent = data.error || 'Gagal mendapatkan URL';
+        linkEl.href = '#';
+      }
+    })
+    .catch(err => {
+      const linkEl = document.getElementById('auth-link');
+      linkEl.textContent = err.message;
+      linkEl.href = '#';
+    });
+}
+
+function submitAuthCode() {
+  const overlay = document.getElementById('modal-overlay');
+  const remote = overlay.dataset.remote;
+  const code = document.getElementById('auth-code-input').value.trim();
+  const statusMsg = document.getElementById('modal-status');
+  if (!code) {
+    statusMsg.textContent = 'Kode otorisasi tidak boleh kosong';
+    statusMsg.style.background = 'var(--danger)';
+    statusMsg.style.display = 'block';
+    return;
+  }
+  fetch('/api/gdrive/verify-token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ remote, code })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        statusMsg.textContent = data.error;
+        statusMsg.style.background = 'var(--danger)';
+      } else {
+        statusMsg.textContent = data.message || 'Berhasil!';
+        statusMsg.style.background = 'var(--success)';
+        // Refresh stats after short delay
+        setTimeout(() => fetchData(), 2000);
+      }
+      statusMsg.style.display = 'block';
+    })
+    .catch(err => {
+      statusMsg.textContent = err.message;
+      statusMsg.style.background = 'var(--danger)';
+      statusMsg.style.display = 'block';
+    });
+}
+
+function closeModal() {
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.remove('active');
+}
+
+// --- Log Viewer Modal Logic ---
+let activeLogTarget = 'cron';
+let activeLogName = 'wifi';
+let activeLogLabel = 'WiFi 2.4G Router';
+
+function openLogModal(target, name, label) {
+  if (target && name) {
+    activeLogTarget = target;
+    activeLogName = name;
+    activeLogLabel = label || name;
+
+    const select = document.getElementById('log-source-select');
+    if (select) {
+      const val = `${target}:${name}`;
+      let optionExists = false;
+      for (let i = 0; i < select.options.length; i++) {
+        if (select.options[i].value === val) {
+          select.selectedIndex = i;
+          optionExists = true;
+          break;
+        }
+      }
+      if (!optionExists) {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.text = `${label || name} (${target}/${name})`;
+        select.appendChild(opt);
+        select.value = val;
+      }
+    }
+  }
+
+  const overlay = document.getElementById('log-modal-overlay');
+  if (overlay) {
+    overlay.classList.add('active');
+    fetchActiveLogs();
+  }
+}
+
+function closeLogModal() {
+  const overlay = document.getElementById('log-modal-overlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+  }
+}
+
+function onLogSourceChange() {
+  const select = document.getElementById('log-source-select');
+  if (!select) return;
+  const parts = select.value.split(':');
+  if (parts.length === 2) {
+    activeLogTarget = parts[0];
+    activeLogName = parts[1];
+    activeLogLabel = select.options[select.selectedIndex].text;
+    fetchActiveLogs();
+  }
+}
+
+async function fetchActiveLogs() {
+  const term = document.getElementById('log-terminal');
+  const statusBar = document.getElementById('log-status-bar-text');
+  const subTitle = document.getElementById('log-modal-subtitle');
+  const linesSel = document.getElementById('log-lines-select');
+  const lines = linesSel ? linesSel.value : '60';
+
+  if (subTitle) {
+    subTitle.innerText = `• ${activeLogTarget}/${activeLogName}`;
+  }
+
+  if (statusBar) {
+    statusBar.innerText = 'Mengambil log...';
+  }
+
+  try {
+    const res = await fetch(`/api/logs?target=${encodeURIComponent(activeLogTarget)}&name=${encodeURIComponent(activeLogName)}&lines=${encodeURIComponent(lines)}`);
+    const data = await res.json();
+
+    if (!res.ok || data.status === 'error') {
+      term.innerHTML = `<span style="color: var(--danger);">[ERROR] ${data.message || 'Gagal memuat log.'}</span>`;
+      if (statusBar) statusBar.innerText = `Gagal (${res.status})`;
+      return;
+    }
+
+    const logContent = data.logs || '(Tidak ada data log yang tersedia)';
+    term.textContent = logContent;
+    term.scrollTop = term.scrollHeight;
+
+    const lineCount = (logContent.match(/\n/g) || []).length + 1;
+    if (statusBar) {
+      const nowStr = new Date().toLocaleTimeString('id-ID');
+      statusBar.innerText = `${lineCount} baris log dimuat pada ${nowStr}`;
+    }
+  } catch (err) {
+    if (term) term.innerHTML = `<span style="color: var(--danger);">[FETCH ERROR] ${err.message}</span>`;
+    if (statusBar) statusBar.innerText = 'Koneksi error';
+  }
+}
+
+function copyActiveLog() {
+  const term = document.getElementById('log-terminal');
+  const btn = document.getElementById('btn-copy-log');
+  if (!term) return;
+
+  const text = term.textContent;
+  const feedback = () => {
+    if (btn) {
+      const old = btn.innerText;
+      btn.innerText = 'Tersalin!';
+      setTimeout(() => { btn.innerText = old; }, 1500);
+    }
+  };
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(feedback).catch(() => fallbackCopy(text, feedback));
+  } else {
+    fallbackCopy(text, feedback);
+  }
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeLogModal();
+    closeModal();
+  }
+});
+
+</script>
+<!-- Reconnect Modal -->
+<div id="modal-overlay" class="modal-overlay" onclick="if(event.target === this) closeModal();">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3>Reconnect Google Drive <span id="modal-remote-name" style="font-weight: normal;"></span></h3>
+      <button class="modal-close-btn" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-step">
+      <label>1. Buka tautan OAuth di tab baru:</label>
+      <a id="auth-link" href="#" target="_blank" class="btn-action-primary">Buka Google OAuth Link</a>
+    </div>
+    <div class="modal-step">
+      <label>2. Salin kode otorisasi yang muncul, kemudian tempelkan di bawah:</label>
+      <input type="text" id="auth-code-input" class="input-auth-code" placeholder="Masukkan kode otorisasi..." />
+    </div>
+    <button class="btn-action-primary" onclick="submitAuthCode()">Kirim Kode & Reconnect</button>
+    <div id="modal-status" class="modal-status-msg"></div>
+  </div>
+</div>
+<!-- End Reconnect Modal -->
+
+<!-- Log Viewer Modal -->
+<div id="log-modal-overlay" class="modal-overlay" onclick="if(event.target === this) closeLogModal();">
+  <div class="modal-dialog modal-large">
+    <div class="modal-header">
+      <h3 style="display: flex; align-items: center; gap: 8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4 17 10 11 4 5"></polyline>
+          <line x1="12" y1="19" x2="20" y2="19"></line>
+        </svg>
+        Log Viewer <span id="log-modal-subtitle" style="font-size: 11px; font-weight: normal; color: var(--text-dim); margin-left: 6px;"></span>
+      </h3>
+      <button class="modal-close-btn" onclick="closeLogModal()" title="Tutup">&times;</button>
+    </div>
+
+    <!-- Controls Toolbar -->
+    <div class="log-controls">
+      <select id="log-source-select" class="log-select" onchange="onLogSourceChange()">
+        <optgroup label="Cronjobs">
+          <option value="cron:wifi">WiFi Router Cron (cron/wifi)</option>
+          <option value="cron:siftnu">Backup Siftnu (cron/siftnu)</option>
+        </optgroup>
+        <optgroup label="Systemd Services">
+          <option value="systemd:9router.service">9Router Gateway (systemd/9router.service)</option>
+          <option value="systemd:e-pool.service">e-pool App (systemd/e-pool.service)</option>
+        </optgroup>
+        <optgroup label="Docker Containers">
+          <option value="docker:mariadb">MariaDB (docker/mariadb)</option>
+          <option value="docker:cloudflared">Cloudflared Tunnel (docker/cloudflared)</option>
+        </optgroup>
+      </select>
+
+      <select id="log-lines-select" class="log-lines-select" onchange="fetchActiveLogs()" title="Jumlah baris log">
+        <option value="30">30 baris</option>
+        <option value="60" selected>60 baris</option>
+        <option value="100">100 baris</option>
+        <option value="200">200 baris</option>
+      </select>
+
+      <button class="btn-copy" id="btn-copy-log" onclick="copyActiveLog()" title="Salin seluruh log ke clipboard">
+        Salin
+      </button>
+
+      <button class="btn-refresh-icon" onclick="fetchActiveLogs()" title="Segarkan Log" style="width: 28px; height: 28px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Monospace Terminal Output -->
+    <div id="log-terminal" class="log-terminal mono">Memuat log...</div>
+
+    <!-- Status Bar -->
+    <div class="log-status-bar">
+      <span id="log-status-bar-text">Siap</span>
+      <button class="btn-control" onclick="closeLogModal()" style="padding: 3px 10px; font-size: 11px; cursor: pointer;">Tutup</button>
+    </div>
+  </div>
+</div>
+<!-- End Log Viewer Modal -->
+
 </html>
