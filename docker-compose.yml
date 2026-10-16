@@ -1,0 +1,12 @@
+services:
+  monitor:
+    build: .
+    container_name: server-monitor
+    restart: unless-stopped
+    ports:
+      - "8088:8088"
+    pid: host
+    volumes:
+      - /proc:/proc:ro
+      - /sys:/sys:ro
+      - /etc/os-release:/etc/os-release:ro
