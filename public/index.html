@@ -226,6 +226,19 @@
     .bar-fill.rose { background: var(--danger); }
 
     /* Overview Quick Hero Cards */
+    .quick-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    @media (min-width: 580px) {
+      .quick-metrics-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
     .hero-stat-card {
       background: var(--card-sub);
       border: 1px solid var(--border);
@@ -246,6 +259,35 @@
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
+    }
+
+    /* Thermal Grid */
+    .thermal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 8px;
+    }
+
+    .thermal-item {
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .thermal-name {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .thermal-val {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
     }
 
     /* Services Grid */
@@ -557,7 +599,7 @@
     <!-- TAB 1: RINGKASAN (OVERVIEW) -->
     <div id="tab-overview" class="tab-content active">
       <!-- Quick Metric Counters -->
-      <div class="grid-3" style="margin-bottom: 12px;">
+      <div class="quick-metrics-grid">
         <div class="hero-stat-card">
           <div class="hero-stat-lbl">CPU Total</div>
           <div class="hero-stat-val" id="ov-cpu" style="color: var(--accent);">0%</div>
@@ -567,8 +609,12 @@
           <div class="hero-stat-val" id="ov-ram" style="color: var(--success);">0%</div>
         </div>
         <div class="hero-stat-card">
-          <div class="hero-stat-lbl">Disk (/)</div>
-          <div class="hero-stat-val" id="ov-disk" style="color: var(--text);">0%</div>
+          <div class="hero-stat-lbl">Suhu CPU</div>
+          <div class="hero-stat-val" id="ov-temp" style="color: var(--warning);">--°C</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="hero-stat-lbl">Daya / Baterai</div>
+          <div class="hero-stat-val" id="ov-power" style="color: var(--text);">--</div>
         </div>
       </div>
 
@@ -640,6 +686,44 @@
         </div>
         <div class="cores-grid" id="cores-container">
           <!-- Cores rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Hardware Thermals Card -->
+      <div class="card">
+        <div class="card-title">
+          <span>Suhu Hardware (Thermal Sensors)</span>
+          <span class="badge mono" id="hw-temp-primary">--°C</span>
+        </div>
+        <div class="thermal-grid" id="thermal-container">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Power Supply & Battery Card -->
+      <div class="card">
+        <div class="card-title">
+          <span>Status Daya & Baterai</span>
+          <span class="badge" id="hw-power-badge">--</span>
+        </div>
+        <div id="hw-battery-section">
+          <div class="metric-row">
+            <div class="metric-head">
+              <span>Kapasitas Baterai</span>
+              <span class="mono" id="hw-bat-pct" style="font-weight: 700;">--%</span>
+            </div>
+            <div class="bar-bg">
+              <div class="bar-fill emerald" id="hw-bar-bat" style="width: 0%;"></div>
+            </div>
+          </div>
+          <div class="item-card-sub" style="margin-top: 8px;">
+            <span id="hw-bat-model">Model: --</span>
+            <span id="hw-bat-status">Status: --</span>
+          </div>
+        </div>
+        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 11px; font-family: var(--font-mono); color: var(--text-dim);">
+          <span id="hw-power-source">Sumber: --</span>
+          <span id="hw-power-rate">Daya: --</span>
         </div>
       </div>
 
@@ -728,6 +812,9 @@
           <div class="neo-line"><span class="neo-key">CPU Model</span><span class="neo-val" id="val-cpumodel">--</span></div>
           <div class="neo-line"><span class="neo-key">Cores/Freq</span><span class="neo-val" id="val-cpucount">--</span></div>
           <div class="neo-line"><span class="neo-key">IP Address</span><span class="neo-val" id="val-ip">--</span></div>
+          <div class="neo-line"><span class="neo-key">Daya / Listrik</span><span class="neo-val" id="val-power">--</span></div>
+          <div class="neo-line"><span class="neo-key">Baterai</span><span class="neo-val" id="val-battery">--</span></div>
+          <div class="neo-line"><span class="neo-key">Suhu CPU</span><span class="neo-val" id="val-temp-cpu">--</span></div>
           <div class="neo-line"><span class="neo-key">Uptime</span><span class="neo-val" id="val-uptime">--</span></div>
           <div class="neo-line"><span class="neo-key">Server Clock</span><span class="neo-val" id="val-clock">--</span></div>
           <div class="neo-line"><span class="neo-key">Runtime</span><span class="neo-val">Python 3 Stdlib</span></div>
@@ -836,6 +923,12 @@
       if (pct >= 85) return 'rose';
       if (pct >= 70) return 'amber';
       return 'emerald';
+    }
+
+    function getTempColor(t) {
+      if (t >= 80) return 'var(--danger)';
+      if (t >= 65) return 'var(--warning)';
+      return 'var(--success)';
     }
 
     function switchTab(tabId) {
@@ -974,7 +1067,8 @@
       // Disks
       let rootDisk = data.disks.find(d => d.mount === '/') || data.disks[0];
       if (rootDisk) {
-        document.getElementById('ov-disk').innerText = `${rootDisk.used_percent}%`;
+        const ovDisk = document.getElementById('ov-disk');
+        if (ovDisk) ovDisk.innerText = `${rootDisk.used_percent}%`;
         document.getElementById('ov-disk-txt').innerText = `${fmtBytes(rootDisk.used)} / ${fmtBytes(rootDisk.total)} (${rootDisk.used_percent}%)`;
         const ovDiskBar = document.getElementById('ov-disk-bar');
         ovDiskBar.style.width = `${rootDisk.used_percent}%`;
@@ -1027,6 +1121,103 @@
         `;
         hwNetContainer.appendChild(item);
       });
+
+      // Thermals & Hardware Temperatures
+      const temps = data.temperatures || [];
+      const primaryTemp = temps.find(t => t.label.toLowerCase().includes('cpu')) || temps[0];
+      const tempValStr = primaryTemp ? `${primaryTemp.temp}°C` : '--°C';
+
+      const ovTempEl = document.getElementById('ov-temp');
+      if (ovTempEl) {
+        ovTempEl.innerText = tempValStr;
+        if (primaryTemp) ovTempEl.style.color = getTempColor(primaryTemp.temp);
+      }
+
+      const hwTempPrim = document.getElementById('hw-temp-primary');
+      if (hwTempPrim) {
+        hwTempPrim.innerText = tempValStr;
+        if (primaryTemp) hwTempPrim.style.color = getTempColor(primaryTemp.temp);
+      }
+
+      const valTempCpu = document.getElementById('val-temp-cpu');
+      if (valTempCpu) {
+        valTempCpu.innerText = primaryTemp ? `${primaryTemp.label}: ${primaryTemp.temp}°C` : 'N/A';
+      }
+
+      const thermContainer = document.getElementById('thermal-container');
+      if (thermContainer) {
+        thermContainer.innerHTML = '';
+        if (temps.length === 0) {
+          thermContainer.innerHTML = '<div style="font-size: 11px; color: var(--text-dim); padding: 8px;">Sensor suhu tidak terdeteksi.</div>';
+        } else {
+          temps.forEach(t => {
+            const item = document.createElement('div');
+            item.className = 'thermal-item';
+            item.innerHTML = `
+              <span class="thermal-name">${t.label}</span>
+              <span class="thermal-val" style="color: ${getTempColor(t.temp)}">${t.temp}°C</span>
+            `;
+            thermContainer.appendChild(item);
+          });
+        }
+      }
+
+      // Power & Battery
+      const pwr = data.power || {};
+      const bat = pwr.battery;
+      const acOnline = pwr.ac_online;
+
+      let pwrText = '--';
+      let batBadge = 'Tanpa Baterai';
+
+      const hwBatSection = document.getElementById('hw-battery-section');
+      if (pwr.has_battery && bat) {
+        const icon = bat.is_charging ? '⚡' : (bat.plugged ? '🔌' : '🔋');
+        pwrText = `${bat.percent}% ${icon}`;
+        batBadge = `${bat.status} (${bat.percent}%)`;
+
+        document.getElementById('hw-bat-pct').innerText = `${bat.percent}%`;
+        const hwBarBat = document.getElementById('hw-bar-bat');
+        hwBarBat.style.width = `${bat.percent}%`;
+        hwBarBat.className = `bar-fill ${bat.percent <= 20 ? 'rose' : (bat.percent <= 50 ? 'amber' : 'emerald')}`;
+
+        document.getElementById('hw-bat-model').innerText = `Model: ${bat.model || 'Baterai'}`;
+        document.getElementById('hw-bat-status').innerText = `Status: ${bat.status}`;
+        if (hwBatSection) hwBatSection.style.display = 'block';
+      } else {
+        pwrText = acOnline ? 'AC 🔌' : 'Offline';
+        batBadge = acOnline ? 'AC Mains (Online)' : 'AC Mains (Offline)';
+        if (hwBatSection) hwBatSection.style.display = 'none';
+      }
+
+      const ovPowerEl = document.getElementById('ov-power');
+      if (ovPowerEl) ovPowerEl.innerText = pwrText;
+
+      const hwPowerBadge = document.getElementById('hw-power-badge');
+      if (hwPowerBadge) {
+        hwPowerBadge.innerText = batBadge;
+        if (pwr.has_battery && bat && !bat.plugged && bat.percent < 25) {
+          hwPowerBadge.className = 'badge rose';
+        } else if (bat && (bat.is_charging || bat.plugged)) {
+          hwPowerBadge.className = 'badge green';
+        } else {
+          hwPowerBadge.className = 'badge';
+        }
+      }
+
+      const pwrSourceStr = acOnline ? 'AC Adaptor Terhubung' : 'Mode Baterai (Unplugged)';
+      const pwrRateStr = (bat && bat.power_watts > 0) ? `${bat.power_watts} W (${bat.voltage} V)` : (bat && bat.voltage > 0 ? `${bat.voltage} V` : 'Stabil');
+      const hwPwrSrc = document.getElementById('hw-power-source');
+      if (hwPwrSrc) hwPwrSrc.innerText = `Sumber: ${pwrSourceStr}`;
+      const hwPwrRate = document.getElementById('hw-power-rate');
+      if (hwPwrRate) hwPwrRate.innerText = `Daya: ${pwrRateStr}`;
+
+      const valPwr = document.getElementById('val-power');
+      if (valPwr) valPwr.innerText = acOnline ? 'AC Terhubung (Mains)' : 'Baterai (Discharging)';
+      const valBat = document.getElementById('val-battery');
+      if (valBat) {
+        valBat.innerText = (pwr.has_battery && bat) ? `${bat.percent}% (${bat.status}) - ${bat.model}` : 'Tidak terdeteksi';
+      }
     }
 
     function renderProcesses(procs) {
