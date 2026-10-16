@@ -2,8 +2,9 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Server Monitor | faizen</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230ea5e9'><rect width='24' height='24' rx='4'/></svg>">
   <style>
     :root {
       --bg: #090d16;
@@ -15,6 +16,7 @@
       --text-muted: #94a3b8;
       --text-dim: #64748b;
       --accent: #0ea5e9;
+      --accent-sub: rgba(14, 165, 233, 0.15);
       --success: #10b981;
       --warning: #f59e0b;
       --danger: #ef4444;
@@ -26,6 +28,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -34,8 +37,13 @@
       font-family: var(--font-sans);
       font-size: 13px;
       line-height: 1.45;
-      padding: 14px;
+      padding: 12px 12px calc(68px + env(safe-area-inset-bottom, 12px)) 12px;
       min-height: 100vh;
+    }
+
+    .app-container {
+      max-width: 860px;
+      margin: 0 auto;
     }
 
     .mono {
@@ -45,28 +53,28 @@
     /* Top Bar */
     header {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px 16px;
+      border-radius: 8px;
+      padding: 10px 14px;
       margin-bottom: 12px;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .brand h1 {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       letter-spacing: 0.5px;
       text-transform: uppercase;
+      white-space: nowrap;
     }
 
     .badge {
@@ -80,6 +88,7 @@
       background: var(--card-sub);
       border: 1px solid var(--border);
       color: var(--text-muted);
+      white-space: nowrap;
     }
 
     .badge.green {
@@ -94,66 +103,55 @@
       background: var(--success);
     }
 
-    .header-meta {
+    .header-quick {
       display: flex;
       align-items: center;
-      gap: 14px;
-      font-size: 12px;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
     }
 
-    .controls {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    select, button {
+    .btn-refresh-icon {
       background: var(--card-sub);
       border: 1px solid var(--border);
       color: var(--text);
-      font-family: var(--font-sans);
-      font-size: 11px;
-      padding: 4px 8px;
-      border-radius: 4px;
-      outline: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
     }
 
-    select:focus, button:hover {
-      border-color: var(--border-focus);
+    .btn-refresh-icon:active {
+      transform: scale(0.95);
+      border-color: var(--accent);
     }
 
-    /* Grid System */
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 12px;
-      margin-bottom: 12px;
+    /* Tab Panes */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.15s ease-out;
     }
 
-    .grid-4 {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 12px;
+    .tab-content.active {
+      display: block;
     }
 
-    @media (max-width: 1024px) {
-      .grid-2 { grid-template-columns: 1fr; }
-      .grid-4 { grid-template-columns: 1fr 1fr; }
-    }
-
-    @media (max-width: 640px) {
-      .grid-4 { grid-template-columns: 1fr; }
-      header { flex-direction: column; align-items: flex-start; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Cards */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;
       padding: 12px 14px;
+      margin-bottom: 12px;
     }
 
     .card-title {
@@ -170,53 +168,97 @@
       margin-bottom: 10px;
     }
 
-    /* Neofetch Section */
-    .neofetch-wrap {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
+    /* Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
 
-    .ascii-logo {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      line-height: 1.25;
-      color: var(--accent);
-      white-space: pre;
-      user-select: none;
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
     }
 
-    .neofetch-info {
-      flex: 1;
+    @media (max-width: 600px) {
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Metric Bar Components */
+    .metric-row {
+      margin-bottom: 12px;
+    }
+
+    .metric-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .metric-head {
       display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-family: var(--font-mono);
+      justify-content: space-between;
+      align-items: center;
       font-size: 12px;
+      font-family: var(--font-mono);
+      margin-bottom: 5px;
     }
 
-    .neo-line {
+    .bar-bg {
+      width: 100%;
+      height: 9px;
+      background: var(--card-sub);
+      border-radius: 4px;
+      overflow: hidden;
       display: flex;
-      gap: 8px;
+      border: 1px solid var(--border);
     }
 
-    .neo-key {
-      color: var(--accent);
-      min-width: 90px;
-      font-weight: 600;
+    .bar-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.3s ease;
     }
 
-    .neo-val {
-      color: var(--text);
-      word-break: break-all;
+    .bar-fill.emerald { background: var(--success); }
+    .bar-fill.amber { background: var(--warning); }
+    .bar-fill.rose { background: var(--danger); }
+
+    /* Overview Quick Hero Cards */
+    .hero-stat-card {
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      text-align: center;
     }
 
-    /* cPanel Services */
+    .hero-stat-val {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      margin-top: 2px;
+    }
+
+    .hero-stat-lbl {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Services Grid */
     .services-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-      margin-bottom: 12px;
+    }
+
+    @media (max-width: 480px) {
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .service-item {
@@ -225,8 +267,8 @@
       justify-content: space-between;
       background: var(--card-sub);
       border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 6px 10px;
+      border-radius: 6px;
+      padding: 8px 10px;
       font-size: 12px;
     }
 
@@ -243,54 +285,19 @@
       box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
     }
 
-    /* Progress Bars */
-    .metric-row {
-      margin-bottom: 10px;
-    }
-
-    .metric-head {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      margin-bottom: 4px;
-    }
-
-    .bar-bg {
-      width: 100%;
-      height: 8px;
-      background: var(--card-sub);
-      border-radius: 3px;
-      overflow: hidden;
-      display: flex;
-      border: 1px solid var(--border);
-    }
-
-    .bar-fill {
-      height: 100%;
-      background: var(--accent);
-      transition: width 0.3s ease;
-    }
-
-    .bar-fill.emerald { background: var(--success); }
-    .bar-fill.amber { background: var(--warning); }
-    .bar-fill.rose { background: var(--danger); }
-
-    /* Cores Mini Grid */
+    /* CPU Cores Grid */
     .cores-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
       gap: 6px;
       margin-top: 8px;
-      max-height: 150px;
-      overflow-y: auto;
     }
 
     .core-box {
       background: var(--card-sub);
       border: 1px solid var(--border);
       border-radius: 4px;
-      padding: 4px 6px;
+      padding: 5px 6px;
       font-family: var(--font-mono);
       font-size: 10px;
     }
@@ -301,287 +308,513 @@
       margin-bottom: 3px;
     }
 
-    /* Disks Table */
-    table.compact-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: var(--font-mono);
-      font-size: 11px;
-    }
-
-    table.compact-table th {
-      text-align: left;
-      color: var(--text-dim);
-      font-weight: 500;
-      padding: 4px 6px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    table.compact-table td {
-      padding: 5px 6px;
-      border-bottom: 1px solid rgba(30, 41, 59, 0.5);
-    }
-
-    table.compact-table tr:last-child td {
-      border-bottom: none;
-    }
-
-    /* Process Table */
-    .proc-header-actions {
+    /* Mobile Friendly Disk & Network Cards */
+    .item-list {
       display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .item-card {
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+
+    .item-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .item-card-sub {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
+
+    /* Mobile Process Cards */
+    .proc-item {
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      display: flex;
+      flex-direction: column;
       gap: 4px;
     }
 
-    .btn-sort {
-      font-size: 10px;
-      padding: 2px 6px;
+    .proc-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
     }
 
-    .btn-sort.active {
-      background: var(--accent);
-      color: #000;
+    .proc-name {
       font-weight: 600;
+      color: var(--text);
+      word-break: break-all;
+      font-size: 12px;
+    }
+
+    .proc-metrics {
+      display: flex;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .proc-item-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
+
+    /* Neofetch Spec Lines */
+    .neo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .neo-line {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 8px;
+      background: var(--card-sub);
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .neo-key {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .neo-val {
+      color: var(--text);
+      text-align: right;
+      word-break: break-all;
+    }
+
+    /* Control Inputs */
+    .control-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .control-row:last-child {
+      border-bottom: none;
+    }
+
+    select, button.btn-control {
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    button.btn-control:active {
       border-color: var(--accent);
     }
 
-    .proc-table-wrap {
-      max-height: 280px;
-      overflow-y: auto;
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 6px 4px max(6px, env(safe-area-inset-bottom, 6px)) 4px;
+      z-index: 999;
+    }
+
+    .nav-btn {
+      flex: 1;
+      max-width: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 4px 2px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: color 0.15s, transform 0.1s;
+    }
+
+    .nav-btn svg {
+      stroke: var(--text-dim);
+      transition: stroke 0.15s;
+    }
+
+    .nav-btn.active {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .nav-btn.active svg {
+      stroke: var(--accent);
+    }
+
+    .nav-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* Filter & Sort Pills */
+    .pill-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .pill-btn {
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-family: var(--font-mono);
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .pill-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      font-weight: 700;
     }
 
     /* Scrollbar */
     ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
+      width: 4px;
+      height: 4px;
     }
     ::-webkit-scrollbar-track {
       background: var(--card-sub);
     }
     ::-webkit-scrollbar-thumb {
       background: var(--border-focus);
-      border-radius: 3px;
+      border-radius: 2px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-    <div class="brand">
-      <h1>Server Monitor</h1>
-      <span class="badge green"><span class="pulse"></span> LIVE</span>
-      <span class="badge" id="badge-host">faizen</span>
+  <div class="app-container">
+    <!-- Header -->
+    <header>
+      <div class="brand">
+        <h1>Monitor</h1>
+        <span class="badge green"><span class="pulse"></span> LIVE</span>
+        <span class="badge mono" id="badge-host">faizen</span>
+      </div>
+
+      <div class="header-quick">
+        <span id="header-uptime">--</span>
+        <button class="btn-refresh-icon" onclick="fetchData()" title="Segarkan">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- TAB 1: RINGKASAN (OVERVIEW) -->
+    <div id="tab-overview" class="tab-content active">
+      <!-- Quick Metric Counters -->
+      <div class="grid-3" style="margin-bottom: 12px;">
+        <div class="hero-stat-card">
+          <div class="hero-stat-lbl">CPU Total</div>
+          <div class="hero-stat-val" id="ov-cpu" style="color: var(--accent);">0%</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="hero-stat-lbl">RAM Terpakai</div>
+          <div class="hero-stat-val" id="ov-ram" style="color: var(--success);">0%</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="hero-stat-lbl">Disk (/)</div>
+          <div class="hero-stat-val" id="ov-disk" style="color: var(--text);">0%</div>
+        </div>
+      </div>
+
+      <!-- Quick Gauges Card -->
+      <div class="card">
+        <div class="card-title">
+          <span>Penggunaan Sumber Daya Inti</span>
+          <span class="badge mono" id="ov-load">Load: --</span>
+        </div>
+        
+        <div class="metric-row">
+          <div class="metric-head">
+            <span>CPU</span>
+            <span id="ov-cpu-txt">0%</span>
+          </div>
+          <div class="bar-bg">
+            <div class="bar-fill" id="ov-cpu-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="metric-row">
+          <div class="metric-head">
+            <span>RAM</span>
+            <span id="ov-ram-txt">-- / --</span>
+          </div>
+          <div class="bar-bg">
+            <div class="bar-fill emerald" id="ov-ram-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="metric-row">
+          <div class="metric-head">
+            <span>Disk Root (/)</span>
+            <span id="ov-disk-txt">-- / --</span>
+          </div>
+          <div class="bar-bg">
+            <div class="bar-fill" id="ov-disk-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services Status (cPanel) -->
+      <div class="card">
+        <div class="card-title">
+          <span>Status Layanan Server</span>
+          <span class="badge" id="val-service-count">-- online</span>
+        </div>
+        <div class="services-grid" id="services-container">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
     </div>
 
-    <div class="header-meta mono">
-      <div>Uptime: <span id="val-uptime" style="color: var(--accent);">--</span></div>
-      <div>Load: <span id="val-load" style="color: var(--text);">--</span></div>
-      <div>Clock: <span id="val-clock" style="color: var(--text-muted);">--</span></div>
+    <!-- TAB 2: HARDWARE & METRIK (btop) -->
+    <div id="tab-hardware" class="tab-content">
+      <!-- CPU Detailed Card -->
+      <div class="card">
+        <div class="card-title">
+          <span>CPU Utilization & Logical Cores</span>
+          <span class="mono" id="hw-cpu-total" style="color: var(--accent); font-weight: 700;">0%</span>
+        </div>
+        <div class="metric-row">
+          <div class="bar-bg">
+            <div class="bar-fill" id="hw-cpu-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+        <div class="metric-head" style="margin-top: 10px;">
+          <span style="font-size: 11px; color: var(--text-dim);">Aktivitas Per Core</span>
+        </div>
+        <div class="cores-grid" id="cores-container">
+          <!-- Cores rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Memory & Swap Card -->
+      <div class="card">
+        <div class="card-title">
+          <span>Memori Fisik & Swap</span>
+          <span class="mono" id="hw-ram-pct">0%</span>
+        </div>
+        <div class="metric-row">
+          <div class="metric-head">
+            <span>RAM Fisik</span>
+            <span id="hw-ram-detail">-- / --</span>
+          </div>
+          <div class="bar-bg">
+            <div class="bar-fill emerald" id="hw-bar-ram" style="width: 0%;"></div>
+          </div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-head">
+            <span>Cached / Buffers</span>
+            <span id="hw-ram-cache">--</span>
+          </div>
+        </div>
+        <div class="metric-row" style="margin-top: 10px;">
+          <div class="metric-head">
+            <span>Swap Space</span>
+            <span id="hw-swap-detail">-- / --</span>
+          </div>
+          <div class="bar-bg">
+            <div class="bar-fill amber" id="hw-bar-swap" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Disks Mounts Card -->
+      <div class="card">
+        <div class="card-title">
+          <span>Penyimpanan & Partisi</span>
+          <span class="badge" id="hw-disk-count">-- mount</span>
+        </div>
+        <div class="item-list" id="hw-disks-container">
+          <!-- Disks rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Network Throughput Card -->
+      <div class="card">
+        <div class="card-title">
+          <span>Bandwidth Jaringan (Realtime)</span>
+          <span class="badge" id="hw-net-count">-- iface</span>
+        </div>
+        <div class="item-list" id="hw-network-container">
+          <!-- Network rendered dynamically -->
+        </div>
+      </div>
     </div>
 
-    <div class="controls">
-      <select id="sel-interval" onchange="changeInterval()">
-        <option value="1000">1 detik</option>
-        <option value="2000" selected>2 detik</option>
-        <option value="5000">5 detik</option>
-        <option value="0">Jeda (Pause)</option>
-      </select>
-      <button onclick="fetchData()">Refresh</button>
-    </div>
-  </header>
-
-  <!-- Top Section: Neofetch + cPanel Server Status -->
-  <div class="grid-2">
-    <!-- Neofetch Spec Card -->
-    <div class="card">
-      <div class="card-title">
-        <span>System Architecture (Neofetch)</span>
-        <span class="badge" id="val-arch">x86_64</span>
-      </div>
-      <div class="neofetch-wrap">
-        <div class="ascii-logo">
-   ___ _   _ ____  
-  / _ \ | | |  _ \ 
- | | | | | | | |_) |
- | |_| | |_| |  __/ 
-  \__\_\\___/|_|    
-  LINUX SERVER
+    <!-- TAB 3: PROSES AKTIF (btop tasks) -->
+    <div id="tab-processes" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span>Daftar Proses Teratas</span>
+          <div class="pill-group">
+            <button class="pill-btn active" id="btn-sort-cpu" onclick="setProcessSort('cpu')">CPU</button>
+            <button class="pill-btn" id="btn-sort-mem" onclick="setProcessSort('mem')">MEM</button>
+          </div>
         </div>
-        <div class="neofetch-info">
-          <div class="neo-line"><span class="neo-key">OS:</span><span class="neo-val" id="val-os">--</span></div>
-          <div class="neo-line"><span class="neo-key">Kernel:</span><span class="neo-val" id="val-kernel">--</span></div>
-          <div class="neo-line"><span class="neo-key">CPU Model:</span><span class="neo-val" id="val-cpumodel">--</span></div>
-          <div class="neo-line"><span class="neo-key">Cores/Freq:</span><span class="neo-val" id="val-cpucount">--</span></div>
-          <div class="neo-line"><span class="neo-key">Host/IP:</span><span class="neo-val" id="val-ip">--</span></div>
-          <div class="neo-line"><span class="neo-key">Runtime:</span><span class="neo-val" id="val-runtime">Python 3 Stdlib</span></div>
+        <div id="proc-cards-container">
+          <div style="text-align: center; color: var(--text-dim); padding: 20px;">Memuat daftar proses...</div>
         </div>
       </div>
     </div>
 
-    <!-- cPanel Server Information -->
-    <div class="card">
-      <div class="card-title">
-        <span>Service Status (cPanel)</span>
-        <span class="badge" id="val-service-count">-- online</span>
-      </div>
-      <div class="services-grid" id="services-container">
-        <!-- Rendered dynamically -->
-      </div>
-      <div class="metric-row">
-        <div class="metric-head">
-          <span>RAM Utilization</span>
-          <span id="quick-ram-txt">-- / --</span>
+    <!-- TAB 4: SISTEM & INFO (Neofetch & Setting) -->
+    <div id="tab-system" class="tab-content">
+      <!-- Neofetch Arch Card -->
+      <div class="card">
+        <div class="card-title">
+          <span>Spesifikasi Sistem (Neofetch)</span>
+          <span class="badge mono" id="val-arch">x86_64</span>
         </div>
-        <div class="bar-bg">
-          <div class="bar-fill emerald" id="quick-ram-bar" style="width: 0%;"></div>
+        <div class="neo-list">
+          <div class="neo-line"><span class="neo-key">OS</span><span class="neo-val" id="val-os">--</span></div>
+          <div class="neo-line"><span class="neo-key">Kernel</span><span class="neo-val" id="val-kernel">--</span></div>
+          <div class="neo-line"><span class="neo-key">CPU Model</span><span class="neo-val" id="val-cpumodel">--</span></div>
+          <div class="neo-line"><span class="neo-key">Cores/Freq</span><span class="neo-val" id="val-cpucount">--</span></div>
+          <div class="neo-line"><span class="neo-key">IP Address</span><span class="neo-val" id="val-ip">--</span></div>
+          <div class="neo-line"><span class="neo-key">Uptime</span><span class="neo-val" id="val-uptime">--</span></div>
+          <div class="neo-line"><span class="neo-key">Server Clock</span><span class="neo-val" id="val-clock">--</span></div>
+          <div class="neo-line"><span class="neo-key">Runtime</span><span class="neo-val">Python 3 Stdlib</span></div>
         </div>
       </div>
-      <div class="metric-row" style="margin-bottom: 0;">
-        <div class="metric-head">
-          <span>Root Disk (/)</span>
-          <span id="quick-disk-txt">-- / --</span>
+
+      <!-- Controls & Preferences -->
+      <div class="card">
+        <div class="card-title">
+          <span>Pengaturan Dashboard</span>
+          <span class="badge">Opsi</span>
         </div>
-        <div class="bar-bg">
-          <div class="bar-fill" id="quick-disk-bar" style="width: 0%;"></div>
+        <div class="control-row">
+          <div>
+            <div style="font-weight: 600;">Interval Refresh</div>
+            <div style="font-size: 11px; color: var(--text-dim);">Kecepatan polling metrik server</div>
+          </div>
+          <select id="sel-interval" onchange="changeInterval()">
+            <option value="1000">1 detik</option>
+            <option value="2000" selected>2 detik</option>
+            <option value="5000">5 detik</option>
+            <option value="0">Jeda (Pause)</option>
+          </select>
+        </div>
+        <div class="control-row" style="margin-top: 6px;">
+          <div>
+            <div style="font-weight: 600;">Ambil Data Manual</div>
+            <div style="font-size: 11px; color: var(--text-dim);">Trigger polling instan</div>
+          </div>
+          <button class="btn-control" onclick="fetchData()">Segarkan Sekarang</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Middle Section: btop Realtime Gauges -->
-  <div class="grid-4">
-    <!-- CPU Total & Cores -->
-    <div class="card">
-      <div class="card-title">
-        <span>CPU Utilization</span>
-        <span class="mono" id="val-cpu-total" style="color: var(--accent); font-weight: 700;">0%</span>
-      </div>
-      <div class="metric-row">
-        <div class="bar-bg">
-          <div class="bar-fill" id="cpu-total-bar" style="width: 0%;"></div>
-        </div>
-      </div>
-      <div class="metric-head" style="margin-top: 10px;">
-        <span>Logical Cores Activity</span>
-      </div>
-      <div class="cores-grid" id="cores-container">
-        <!-- Core cards rendered dynamically -->
-      </div>
-    </div>
-
-    <!-- Memory & Swap -->
-    <div class="card">
-      <div class="card-title">
-        <span>Memory & Swap</span>
-        <span class="mono" id="val-ram-pct">0%</span>
-      </div>
-      <div class="metric-row">
-        <div class="metric-head">
-          <span>Physical RAM</span>
-          <span id="txt-ram-detail">-- / --</span>
-        </div>
-        <div class="bar-bg">
-          <div class="bar-fill emerald" id="bar-ram" style="width: 0%;"></div>
-        </div>
-      </div>
-      <div class="metric-row">
-        <div class="metric-head">
-          <span>Cached / Buffers</span>
-          <span id="txt-ram-cache">--</span>
-        </div>
-      </div>
-      <div class="metric-row" style="margin-top: 14px;">
-        <div class="metric-head">
-          <span>Swap Space</span>
-          <span id="txt-swap-detail">-- / --</span>
-        </div>
-        <div class="bar-bg">
-          <div class="bar-fill amber" id="bar-swap" style="width: 0%;"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Disk Partitions -->
-    <div class="card">
-      <div class="card-title">
-        <span>Disks & Mounts</span>
-        <span class="badge" id="badge-disk-count">-- mount</span>
-      </div>
-      <div style="max-height: 190px; overflow-y: auto;">
-        <table class="compact-table" id="disks-table">
-          <thead>
-            <tr>
-              <th>Mount</th>
-              <th>Type</th>
-              <th>Usage</th>
-              <th>%</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Disks rendered dynamically -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Network I/O -->
-    <div class="card">
-      <div class="card-title">
-        <span>Network Throughput</span>
-        <span class="badge" id="badge-net-count">-- iface</span>
-      </div>
-      <div style="max-height: 190px; overflow-y: auto;">
-        <table class="compact-table" id="network-table">
-          <thead>
-            <tr>
-              <th>Iface</th>
-              <th>RX Speed</th>
-              <th>TX Speed</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Network rendered dynamically -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bottom Section: Top Processes (btop style) -->
-  <div class="card">
-    <div class="card-title">
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span>Active Processes (btop)</span>
-        <span class="badge" id="badge-proc-mode">Sort: CPU</span>
-      </div>
-      <div class="proc-header-actions">
-        <button class="btn-sort active" id="btn-sort-cpu" onclick="setProcessSort('cpu')">CPU %</button>
-        <button class="btn-sort" id="btn-sort-mem" onclick="setProcessSort('mem')">MEM %</button>
-      </div>
-    </div>
-    <div class="proc-table-wrap">
-      <table class="compact-table" id="proc-table">
-        <thead>
-          <tr>
-            <th style="width: 70px;">PID</th>
-            <th style="width: 100px;">USER</th>
-            <th style="width: 80px;">CPU %</th>
-            <th style="width: 80px;">MEM %</th>
-            <th style="width: 70px;">STAT</th>
-            <th>COMMAND</th>
-          </tr>
-        </thead>
-        <tbody id="proc-tbody">
-          <tr><td colspan="6" style="text-align: center; color: var(--text-dim);">Memuat data proses...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <!-- BOTTOM NAVIGATION BAR -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="btn-tab-overview" onclick="switchTab('overview')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="9"></rect>
+        <rect x="14" y="3" width="7" height="5"></rect>
+        <rect x="14" y="12" width="7" height="9"></rect>
+        <rect x="3" y="16" width="7" height="5"></rect>
+      </svg>
+      <span>Ringkasan</span>
+    </button>
+    
+    <button class="nav-btn" id="btn-tab-hardware" onclick="switchTab('hardware')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+        <rect x="9" y="9" width="6" height="6"></rect>
+        <line x1="9" y1="1" x2="9" y2="4"></line>
+        <line x1="15" y1="1" x2="15" y2="4"></line>
+        <line x1="9" y1="20" x2="9" y2="23"></line>
+        <line x1="15" y1="20" x2="15" y2="23"></line>
+        <line x1="20" y1="9" x2="23" y2="9"></line>
+        <line x1="20" y1="14" x2="23" y2="14"></line>
+        <line x1="1" y1="9" x2="4" y2="9"></line>
+        <line x1="1" y1="14" x2="4" y2="14"></line>
+      </svg>
+      <span>Hardware</span>
+    </button>
+    
+    <button class="nav-btn" id="btn-tab-processes" onclick="switchTab('processes')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="4 17 10 11 4 5"></polyline>
+        <line x1="12" y1="19" x2="20" y2="19"></line>
+      </svg>
+      <span>Proses</span>
+    </button>
+    
+    <button class="nav-btn" id="btn-tab-system" onclick="switchTab('system')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+        <line x1="6" y1="6" x2="6.01" y2="6"></line>
+        <line x1="6" y1="18" x2="6.01" y2="18"></line>
+      </svg>
+      <span>Sistem</span>
+    </button>
+  </nav>
 
   <script>
     let pollInterval = 2000;
     let pollTimer = null;
     let currentProcSort = 'cpu';
+    let activeTab = 'overview';
 
     function fmtBytes(bytes, decimals = 1) {
       if (!bytes || bytes === 0) return '0 B';
@@ -605,6 +838,28 @@
       return 'emerald';
     }
 
+    function switchTab(tabId) {
+      activeTab = tabId;
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+      const targetPane = document.getElementById(`tab-${tabId}`);
+      const targetBtn = document.getElementById(`btn-tab-${tabId}`);
+      if (targetPane) targetPane.classList.add('active');
+      if (targetBtn) targetBtn.classList.add('active');
+
+      window.location.hash = tabId;
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    // Init tab from hash if present
+    if (window.location.hash) {
+      const hash = window.location.hash.replace('#', '');
+      if (['overview', 'hardware', 'processes', 'system'].includes(hash)) {
+        switchTab(hash);
+      }
+    }
+
     async function fetchData() {
       try {
         const [statsRes, procRes] = await Promise.all([
@@ -612,9 +867,10 @@
           fetch(`/api/processes?sort=${currentProcSort}`)
         ]);
 
-        if (!statsRes.ok) throw new Error('Stats API failed');
-        const stats = await statsRes.json();
-        renderStats(stats);
+        if (statsRes.ok) {
+          const stats = await statsRes.json();
+          renderStats(stats);
+        }
 
         if (procRes.ok) {
           const procs = await procRes.json();
@@ -626,13 +882,14 @@
     }
 
     function renderStats(data) {
-      // Header info
+      // Header & System info
       document.getElementById('badge-host').innerText = data.system.hostname;
+      document.getElementById('header-uptime').innerText = `Up: ${data.uptime_load.uptime_formatted}`;
       document.getElementById('val-uptime').innerText = data.uptime_load.uptime_formatted;
-      document.getElementById('val-load').innerText = `${data.uptime_load.load1} ${data.uptime_load.load5} ${data.uptime_load.load15}`;
       document.getElementById('val-clock').innerText = new Date().toLocaleTimeString('id-ID');
+      document.getElementById('ov-load').innerText = `Load: ${data.uptime_load.load1} ${data.uptime_load.load5}`;
 
-      // Neofetch card
+      // Tab Sistem (Neofetch)
       document.getElementById('val-os').innerText = data.system.os;
       document.getElementById('val-kernel').innerText = data.system.kernel;
       document.getElementById('val-cpumodel').innerText = data.system.cpu_model;
@@ -640,7 +897,7 @@
       document.getElementById('val-ip').innerText = data.system.ips.join(', ') || '127.0.0.1';
       document.getElementById('val-arch').innerText = data.system.arch;
 
-      // Services status (cPanel style)
+      // Services status (cPanel)
       const servContainer = document.getElementById('services-container');
       servContainer.innerHTML = '';
       let onlineCount = 0;
@@ -649,7 +906,7 @@
         const item = document.createElement('div');
         item.className = 'service-item';
         item.innerHTML = `
-          <span>${s.name}</span>
+          <span style="font-weight: 500;">${s.name}</span>
           <span style="display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 11px;">
             ${s.status.toUpperCase()}
             <span class="status-dot ${s.status === 'online' ? 'online' : ''}"></span>
@@ -663,32 +920,39 @@
       const ram = data.memory;
       const ramUsedGb = (ram.used / (1024**3)).toFixed(2);
       const ramTotGb = (ram.total / (1024**3)).toFixed(2);
-      document.getElementById('val-ram-pct').innerText = `${ram.used_percent}%`;
-      document.getElementById('txt-ram-detail').innerText = `${ramUsedGb} / ${ramTotGb} GB (${ram.used_percent}%)`;
-      document.getElementById('quick-ram-txt').innerText = `${ramUsedGb} / ${ramTotGb} GB (${ram.used_percent}%)`;
 
-      const barRam = document.getElementById('bar-ram');
-      barRam.style.width = `${ram.used_percent}%`;
-      barRam.className = `bar-fill ${getColorClass(ram.used_percent)}`;
+      // Overview Tab Gauges
+      document.getElementById('ov-ram').innerText = `${ram.used_percent}%`;
+      document.getElementById('ov-ram-txt').innerText = `${ramUsedGb} / ${ramTotGb} GB (${ram.used_percent}%)`;
+      const ovRamBar = document.getElementById('ov-ram-bar');
+      ovRamBar.style.width = `${ram.used_percent}%`;
+      ovRamBar.className = `bar-fill ${getColorClass(ram.used_percent)}`;
 
-      const quickRamBar = document.getElementById('quick-ram-bar');
-      quickRamBar.style.width = `${ram.used_percent}%`;
-      quickRamBar.className = `bar-fill ${getColorClass(ram.used_percent)}`;
+      // Hardware Tab RAM & Swap
+      document.getElementById('hw-ram-pct').innerText = `${ram.used_percent}%`;
+      document.getElementById('hw-ram-detail').innerText = `${ramUsedGb} / ${ramTotGb} GB (${ram.used_percent}%)`;
+      const hwBarRam = document.getElementById('hw-bar-ram');
+      hwBarRam.style.width = `${ram.used_percent}%`;
+      hwBarRam.className = `bar-fill ${getColorClass(ram.used_percent)}`;
+      document.getElementById('hw-ram-cache').innerText = `${fmtBytes(ram.cached)} cached, ${fmtBytes(ram.buffers)} buffers`;
 
-      document.getElementById('txt-ram-cache').innerText = `${fmtBytes(ram.cached)} cached, ${fmtBytes(ram.buffers)} buffers`;
-
-      // Swap
       const swapUsedGb = (ram.swap_used / (1024**3)).toFixed(2);
       const swapTotGb = (ram.swap_total / (1024**3)).toFixed(2);
-      document.getElementById('txt-swap-detail').innerText = ram.swap_total > 0 ? `${swapUsedGb} / ${swapTotGb} GB (${ram.swap_percent}%)` : 'Off';
-      document.getElementById('bar-swap').style.width = `${ram.swap_percent}%`;
+      document.getElementById('hw-swap-detail').innerText = ram.swap_total > 0 ? `${swapUsedGb} / ${swapTotGb} GB (${ram.swap_percent}%)` : 'Nonaktif';
+      document.getElementById('hw-bar-swap').style.width = `${ram.swap_percent}%`;
 
       // CPU Total & Cores
       const cpuUsage = data.cpu.usage_percent;
-      document.getElementById('val-cpu-total').innerText = `${cpuUsage}%`;
-      const cpuTotalBar = document.getElementById('cpu-total-bar');
-      cpuTotalBar.style.width = `${cpuUsage}%`;
-      cpuTotalBar.className = `bar-fill ${getColorClass(cpuUsage)}`;
+      document.getElementById('ov-cpu').innerText = `${cpuUsage}%`;
+      document.getElementById('ov-cpu-txt').innerText = `${cpuUsage}%`;
+      const ovCpuBar = document.getElementById('ov-cpu-bar');
+      ovCpuBar.style.width = `${cpuUsage}%`;
+      ovCpuBar.className = `bar-fill ${getColorClass(cpuUsage)}`;
+
+      document.getElementById('hw-cpu-total').innerText = `${cpuUsage}%`;
+      const hwCpuBar = document.getElementById('hw-cpu-bar');
+      hwCpuBar.style.width = `${cpuUsage}%`;
+      hwCpuBar.className = `bar-fill ${getColorClass(cpuUsage)}`;
 
       const coresContainer = document.getElementById('cores-container');
       coresContainer.innerHTML = '';
@@ -708,71 +972,99 @@
       });
 
       // Disks
-      const diskTbody = document.querySelector('#disks-table tbody');
-      diskTbody.innerHTML = '';
-      document.getElementById('badge-disk-count').innerText = `${data.disks.length} mount`;
-      
       let rootDisk = data.disks.find(d => d.mount === '/') || data.disks[0];
       if (rootDisk) {
-        document.getElementById('quick-disk-txt').innerText = `${fmtBytes(rootDisk.used)} / ${fmtBytes(rootDisk.total)} (${rootDisk.used_percent}%)`;
-        const qDiskBar = document.getElementById('quick-disk-bar');
-        qDiskBar.style.width = `${rootDisk.used_percent}%`;
-        qDiskBar.className = `bar-fill ${getColorClass(rootDisk.used_percent)}`;
+        document.getElementById('ov-disk').innerText = `${rootDisk.used_percent}%`;
+        document.getElementById('ov-disk-txt').innerText = `${fmtBytes(rootDisk.used)} / ${fmtBytes(rootDisk.total)} (${rootDisk.used_percent}%)`;
+        const ovDiskBar = document.getElementById('ov-disk-bar');
+        ovDiskBar.style.width = `${rootDisk.used_percent}%`;
+        ovDiskBar.className = `bar-fill ${getColorClass(rootDisk.used_percent)}`;
       }
 
+      // Hardware Tab Disks
+      const hwDisksContainer = document.getElementById('hw-disks-container');
+      hwDisksContainer.innerHTML = '';
+      document.getElementById('hw-disk-count').innerText = `${data.disks.length} partisi`;
       data.disks.forEach(d => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td style="font-weight: 600;">${d.mount}</td>
-          <td style="color: var(--text-dim);">${d.type}</td>
-          <td>${fmtBytes(d.used)} / ${fmtBytes(d.total)}</td>
-          <td><span style="color: ${d.used_percent > 85 ? 'var(--danger)' : 'var(--text)'};">${d.used_percent}%</span></td>
+        const item = document.createElement('div');
+        item.className = 'item-card';
+        item.innerHTML = `
+          <div class="item-card-head">
+            <span style="font-weight: 600;">${d.mount} <span style="font-size: 10px; color: var(--text-dim); font-weight: 400;">(${d.type})</span></span>
+            <span style="color: ${d.used_percent > 85 ? 'var(--danger)' : 'var(--text)'}; font-weight: 600;">${d.used_percent}%</span>
+          </div>
+          <div class="bar-bg" style="height: 6px; margin: 4px 0 6px 0;">
+            <div class="bar-fill ${getColorClass(d.used_percent)}" style="width: ${d.used_percent}%;"></div>
+          </div>
+          <div class="item-card-sub">
+            <span>Terpakai: ${fmtBytes(d.used)}</span>
+            <span>Total: ${fmtBytes(d.total)}</span>
+          </div>
         `;
-        diskTbody.appendChild(tr);
+        hwDisksContainer.appendChild(item);
       });
 
-      // Network
-      const netTbody = document.querySelector('#network-table tbody');
-      netTbody.innerHTML = '';
+      // Hardware Tab Network
+      const hwNetContainer = document.getElementById('hw-network-container');
+      hwNetContainer.innerHTML = '';
       const ifaces = Object.keys(data.network || {});
-      document.getElementById('badge-net-count').innerText = `${ifaces.length} iface`;
-      
-      // Filter interesting interfaces
       const activeIfaces = ifaces.filter(k => !k.startsWith('veth') && !k.startsWith('br-')).slice(0, 6);
+      document.getElementById('hw-net-count').innerText = `${activeIfaces.length} aktif`;
+
       activeIfaces.forEach(name => {
         const n = data.network[name];
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td style="font-weight: 600;">${name}</td>
-          <td style="color: var(--success);">↓ ${fmtRate(n.rx_speed)}</td>
-          <td style="color: var(--accent);">↑ ${fmtRate(n.tx_speed)}</td>
+        const item = document.createElement('div');
+        item.className = 'item-card';
+        item.innerHTML = `
+          <div class="item-card-head">
+            <span style="font-weight: 600;">${name}</span>
+            <span style="font-size: 11px; color: var(--text-dim);">Interface</span>
+          </div>
+          <div class="item-card-sub" style="margin-top: 4px;">
+            <span style="color: var(--success); font-weight: 600;">↓ RX: ${fmtRate(n.rx_speed)}</span>
+            <span style="color: var(--accent); font-weight: 600;">↑ TX: ${fmtRate(n.tx_speed)}</span>
+          </div>
         `;
-        netTbody.appendChild(tr);
+        hwNetContainer.appendChild(item);
       });
     }
 
     function renderProcesses(procs) {
-      const tbody = document.getElementById('proc-tbody');
-      tbody.innerHTML = '';
+      const container = document.getElementById('proc-cards-container');
+      container.innerHTML = '';
+      if (!procs || procs.length === 0) {
+        container.innerHTML = '<div style="text-align: center; color: var(--text-dim); padding: 14px;">Tidak ada proses.</div>';
+        return;
+      }
+
       procs.forEach(p => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${p.pid}</td>
-          <td style="color: var(--text-muted);">${p.user}</td>
-          <td style="font-weight: 600; color: ${p.cpu > 50 ? 'var(--danger)' : 'var(--accent)'};">${p.cpu}%</td>
-          <td style="color: var(--text);">${p.mem}%</td>
-          <td style="color: var(--text-dim);">${p.stat}</td>
-          <td style="word-break: break-all; max-width: 250px;">${p.name}</td>
+        const card = document.createElement('div');
+        card.className = 'proc-item';
+        card.innerHTML = `
+          <div class="proc-item-top">
+            <span class="proc-name">${p.name}</span>
+            <div class="proc-metrics">
+              <span class="badge ${p.cpu > 50 ? 'rose' : ''}" style="color: ${p.cpu > 50 ? 'var(--danger)' : 'var(--accent)'}; font-weight: 600;">
+                CPU ${p.cpu}%
+              </span>
+              <span class="badge" style="color: var(--text);">
+                RAM ${p.mem}%
+              </span>
+            </div>
+          </div>
+          <div class="proc-item-meta">
+            <span>PID: ${p.pid} • User: ${p.user}</span>
+            <span>Status: ${p.stat}</span>
+          </div>
         `;
-        tbody.appendChild(tr);
+        container.appendChild(card);
       });
     }
 
     function setProcessSort(mode) {
       currentProcSort = mode;
-      document.getElementById('badge-proc-mode').innerText = `Sort: ${mode.toUpperCase()}`;
-      document.getElementById('btn-sort-cpu').className = mode === 'cpu' ? 'btn-sort active' : 'btn-sort';
-      document.getElementById('btn-sort-mem').className = mode === 'mem' ? 'btn-sort active' : 'btn-sort';
+      document.getElementById('btn-sort-cpu').className = mode === 'cpu' ? 'pill-btn active' : 'pill-btn';
+      document.getElementById('btn-sort-mem').className = mode === 'mem' ? 'pill-btn active' : 'pill-btn';
       fetchData();
     }
 
@@ -785,7 +1077,7 @@
       }
     }
 
-    // Initial run
+    // Initial fetch and start loop
     fetchData();
     pollTimer = setInterval(fetchData, pollInterval);
   </script>
